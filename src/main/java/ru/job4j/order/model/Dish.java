@@ -3,20 +3,20 @@ package ru.job4j.order.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
-
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
-@Table(name = "orders")
-public class Order {
+@Table(name = "dishes")
+public class Dish {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
     private int id;
 
-    private int statusId;
+    private String name;
 
-    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
-    private List<Dish> dishes;
+    private String description;
 }

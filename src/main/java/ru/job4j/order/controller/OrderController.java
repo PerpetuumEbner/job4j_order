@@ -3,18 +3,14 @@ package ru.job4j.order.controller;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import ru.job4j.order.dto.OrderDTO;
 import ru.job4j.order.model.Order;
 import ru.job4j.order.service.OrderService;
 
 import java.util.List;
 
-@Controller
+@RestController
 @AllArgsConstructor
 @RequestMapping("/orders")
 public class OrderController {
@@ -23,6 +19,11 @@ public class OrderController {
     @PostMapping("/create")
     public ResponseEntity<OrderDTO> create(@RequestBody Order order) {
         return new ResponseEntity<>(orderService.save(order), HttpStatus.CREATED);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<OrderDTO> findById(@PathVariable int id) {
+        return new ResponseEntity<>(orderService.findById(id), HttpStatus.FOUND);
     }
 
     @GetMapping()
