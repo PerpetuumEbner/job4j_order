@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @Service
 public class DishAPIService {
-    @Value("http://localhost:8080/dishes/")
+    @Value("http://localhost:8081/dishes/")
     private String url;
 
     private final RestTemplate client;

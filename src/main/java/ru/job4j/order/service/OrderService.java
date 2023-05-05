@@ -2,6 +2,7 @@ package ru.job4j.order.service;
 
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import ru.job4j.order.dto.DishDTO;
 import ru.job4j.order.dto.OrderDTO;
@@ -23,10 +24,15 @@ public class OrderService {
 
     private final StatusPersist statusPersist;
 
+    private final DishAPIService dishAPIService;
+
     private final ModelMapper modelMapper;
+
+    private final KafkaTemplate<String, Object> kafkaTemplate;
 
     public OrderDTO save(Order order) {
         Order orderDB = orderPersist.save(order);
+        kafkaTemplate.send("job4j_order", order);
         return convertToOrderDTO(order, orderDB);
     }
 
@@ -62,8 +68,8 @@ public class OrderService {
     }
 
     public List<DishDTO> convertToListDTO(Order order) {
-        return order.getDishes().stream()
-                .map(this::convertToDishDT0)
+        return order.getDishesId().stream()
+                .map(id -> convertToDishDT0(dishAPIService.findById(id).orElseThrow()))
                 .collect(Collectors.toList());
     }
 }

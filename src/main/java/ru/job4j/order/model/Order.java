@@ -17,6 +17,6 @@ public class Order {
 
     private int statusId;
 
-    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
-    private List<Dish> dishes;
+    @ElementCollection
+    private List<Integer> dishesId;
 }
