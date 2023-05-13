@@ -13,5 +13,5 @@ public class Status {
     @EqualsAndHashCode.Include
     private int id;
 
-    private String state;
+    private String status;
 }

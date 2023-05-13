@@ -16,3 +16,10 @@ CREATE TABLE IF NOT EXISTS dishes
     name        TEXT NOT NULL UNIQUE,
     description TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS orders_dishes
+(
+    id        SERIAL PRIMARY KEY,
+    order_id  INT NOT NULL REFERENCES orders (id),
+    dishes_id INT NOT NULL REFERENCES dishes (id)
+)

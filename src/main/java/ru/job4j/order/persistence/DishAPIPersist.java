@@ -1,9 +1,9 @@
-package ru.job4j.order.service;
+package ru.job4j.order.persistence;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 import org.springframework.web.client.RestTemplate;
 import ru.job4j.order.model.Dish;
 
@@ -11,27 +11,27 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-@Service
-public class DishAPIService {
-    @Value("http://localhost:8081/dishes/")
+@Repository
+public class DishAPIPersist {
+    @Value("${api-url}")
     private String url;
 
     private final RestTemplate client;
 
-    public DishAPIService(RestTemplate client) {
+    public DishAPIPersist(RestTemplate client) {
         this.client = client;
     }
 
     public Optional<Dish> findById(int id) {
         return Optional.ofNullable(client.getForEntity(
-                String.format("%s/findById?id=%s", url, id),
+                String.format("%s/%s", url, id),
                 Dish.class
         ).getBody());
     }
 
     public List<Dish> findAll() {
         return getList(String.format(
-                "%s/findAll", url
+                "%s/", url
         ));
     }
 

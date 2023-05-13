@@ -1,14 +1,14 @@
 INSERT INTO statuses (id, status)
-VALUES (1, 'Новый');
+VALUES (0, 'Новый');
 
 INSERT INTO statuses (id, status)
-VALUES (2, 'В обработке');
+VALUES (1, 'В обработке');
 
 INSERT INTO statuses (id, status)
-VALUES (3, 'Отменён');
+VALUES (2, 'Отменён');
 
 INSERT INTO statuses (id, status)
-VALUES (4, 'Доставка');
+VALUES (3, 'Доставка');
 
 INSERT INTO statuses (id, status)
-VALUES (5, 'Завершён');
+VALUES (4, 'Завершён');

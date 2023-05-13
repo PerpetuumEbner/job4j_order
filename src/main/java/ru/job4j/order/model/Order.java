@@ -6,6 +6,8 @@ import lombok.*;
 import java.util.List;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "orders")
@@ -17,6 +19,6 @@ public class Order {
 
     private int statusId;
 
-    @ElementCollection
-    private List<Integer> dishesId;
+    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    private List<Dish> dishes;
 }

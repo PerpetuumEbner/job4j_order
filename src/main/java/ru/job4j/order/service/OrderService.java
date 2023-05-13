@@ -9,6 +9,7 @@ import ru.job4j.order.dto.OrderDTO;
 import ru.job4j.order.model.Dish;
 import ru.job4j.order.model.Order;
 import ru.job4j.order.model.Status;
+import ru.job4j.order.persistence.DishAPIPersist;
 import ru.job4j.order.persistence.OrderPersist;
 import ru.job4j.order.persistence.StatusPersist;
 
@@ -24,7 +25,7 @@ public class OrderService {
 
     private final StatusPersist statusPersist;
 
-    private final DishAPIService dishAPIService;
+    private final DishAPIPersist dishAPIPersist;
 
     private final ModelMapper modelMapper;
 
@@ -32,8 +33,9 @@ public class OrderService {
 
     public OrderDTO save(Order order) {
         Order orderDB = orderPersist.save(order);
-        kafkaTemplate.send("job4j_order", order);
-        return convertToOrderDTO(order, orderDB);
+        OrderDTO orderDTO = convertToOrderDTO(order, orderDB);
+        kafkaTemplate.send("job4j_orders", orderDTO);
+        return orderDTO;
     }
 
     public OrderDTO findById(int id) {
@@ -57,19 +59,23 @@ public class OrderService {
     public OrderDTO convertToOrderDTO(Order order, Order orderDB) {
         OrderDTO orderDTO = new OrderDTO();
         orderDTO.setId(orderDB.getId());
-        Optional<Status> status = statusPersist.findById(order.getId());
-        status.ifPresent(value -> orderDTO.setStatus(value.getState()));
+        Optional<Status> status = statusPersist.findById(order.getStatusId());
+        status.ifPresent(value -> orderDTO.setStatus(value.getStatus()));
         orderDTO.setDishes(convertToListDTO(order));
         return orderDTO;
     }
 
-    public DishDTO convertToDishDT0(Dish dish) {
-        return modelMapper.map(dish, DishDTO.class);
+    public List<DishDTO> convertToListDTO(Order order) {
+        List<DishDTO> collect = new ArrayList<>();
+        for (Dish dish : order.getDishes()) {
+            Dish dishConvert = dishAPIPersist.findById(dish.getId()).orElseThrow();
+            DishDTO dishDTO = convertToDishDT0(dishConvert);
+            collect.add(dishDTO);
+        }
+        return collect;
     }
 
-    public List<DishDTO> convertToListDTO(Order order) {
-        return order.getDishesId().stream()
-                .map(id -> convertToDishDT0(dishAPIService.findById(id).orElseThrow()))
-                .collect(Collectors.toList());
+    public DishDTO convertToDishDT0(Dish dish) {
+        return modelMapper.map(dish, DishDTO.class);
     }
 }
